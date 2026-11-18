@@ -25,18 +25,18 @@ from PySide6.QtWidgets import (
 SAMPLE_RATE = 44100
 WHITE_PITCH_CLASSES = {0, 2, 4, 5, 7, 9, 11}
 KEYBOARD_NOTES = {
-    "a": 0,
-    "q": 1,
-    "z": 2,
-    "s": 3,
-    "e": 4,
-    "r": 5,
-    "d": 6,
-    "t": 7,
-    "f": 8,
-    "y": 9,
-    "g": 10,
-    "u": 11,
+    "q": 0,
+    "z": 1,
+    "s": 2,
+    "e": 3,
+    "d": 4,
+    "f": 5,
+    "t": 6,
+    "g": 7,
+    "y": 8,
+    "h": 9,
+    "u": 10,
+    "j": 11,
 }
 NOTE_NAMES = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
 
@@ -145,7 +145,7 @@ class PianoKeyboard(QWidget):
     notePressed = Signal(int)
     noteReleased = Signal(int)
 
-    def __init__(self, first_note=48, last_note=72):
+    def __init__(self, first_note=48, last_note=84):
         super().__init__()
         self.first_note = first_note
         self.last_note = last_note
@@ -295,8 +295,9 @@ class PianoStudio(QMainWindow):
         layout.addLayout(controls)
 
         layout.addWidget(QLabel(
-            "Notes : A Q Z S E R D T F Y G U (Do à Si) · "
-            "Octave − / + pour transposer · P : enregistrer · Espace : lecture/arrêt · Échap : arrêter"
+            "Notes : Q Z S E D F T G Y H U J (Do à Si) · "
+            "Maj : octave supérieure · Octave − / + pour transposer · "
+            "P : enregistrer · Espace : lecture/arrêt · Échap : arrêter"
         ))
         self.setCentralWidget(central)
         QApplication.instance().installEventFilter(self)
@@ -312,7 +313,7 @@ class PianoStudio(QMainWindow):
         self.octave = max(1, min(7, self.octave + delta))
         self._update_octave_label()
         self.piano.first_note = self.octave * 12
-        self.piano.last_note = self.piano.first_note + 24
+        self.piano.last_note = self.piano.first_note + 36
         self.piano.update()
         self.status.setText(f"Clavier transposé à l'octave {self.octave}.")
 
@@ -354,10 +355,11 @@ class PianoStudio(QMainWindow):
         self.mouse_sources.pop(source, None)
         self._note_off(source, midi_note)
 
-    def _key_note_on(self, key):
+    def _key_note_on(self, key, octave_shift=False):
         if key in self.keyboard_sources:
             return
-        midi_note = (self.octave + 1) * 12 + KEYBOARD_NOTES[key]
+        octave_offset = 12 if octave_shift else 0
+        midi_note = (self.octave + 1) * 12 + octave_offset + KEYBOARD_NOTES[key]
         source = f"key-{key}"
         self.keyboard_sources[key] = midi_note
         self._note_on(source, midi_note)
@@ -377,7 +379,8 @@ class PianoStudio(QMainWindow):
             if event.type() == event.Type.KeyPress:
                 key = event.text().lower()
                 if key in KEYBOARD_NOTES:
-                    self._key_note_on(key)
+                    octave_shift = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
+                    self._key_note_on(key, octave_shift)
                     return True
                 if event.key() == Qt.Key.Key_Space:
                     self.toggle_playback()

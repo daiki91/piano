@@ -4,7 +4,7 @@ Un petit synthétiseur desktop en Python : clavier virtuel, jeu au clavier AZERT
 
 ## Fonctionnalités
 
-- Clavier virtuel sur deux octaves, jouable à la souris.
+- Clavier virtuel sur trois octaves, jouable à la souris.
 - Notes jouables au clavier physique, avec touches actives mises en évidence.
 - Polyphonie et transposition de l'octave du clavier.
 - Quatre formes d'onde : sinusoïdale, carrée, triangulaire et dent de scie.
@@ -48,13 +48,14 @@ python studio.py
 
 | Action | Raccourci |
 | --- | --- |
-| Jouer les notes de Do à Si | `A Q Z S E R D T F Y G U` |
+| Jouer les notes de Do à Si | `Q Z S E D F T G Y H U J` |
+| Jouer une octave plus haut | Maintenir `Maj` |
 | Transposer d'une octave vers le bas / le haut | Boutons `Octave −` / `Octave +` |
 | Enregistrer / terminer l'enregistrement | `P` |
 | Lire / arrêter la séquence | `Espace` |
 | Arrêter toutes les notes et la lecture | `Échap` |
 
-Les notes blanches utilisent `A Z E R T Y U`; les notes noires sont intercalées sur `Q S D F G`. Les touches `+` et `-` transposent également le clavier.
+Les notes blanches utilisent `Q S D F G H J`; les notes noires sont intercalées sur `Z E T Y U`, comme sur un piano. Maintiens `Maj` pour jouer une octave plus haut. Les touches `+` et `-` transposent également le clavier.
 
 ## Anciens modes console
 
